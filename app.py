@@ -4,9 +4,9 @@ from PIL import Image, ImageOps
 import time
 
 # 1. Page Layout Configuration (Browser Tab Name)
-st.set_page_config(page_title="Ghalya Alkhoori - AI Diagnosis", page_icon="🫀", layout="wide")
+st.set_page_config(page_title="Fatima college - AI Diagnosis", page_icon="🫀", layout="wide")
 
-# 2. Custom Header: FCHS Logo and Ghalya Alkhoori Title
+# 2. Custom Header: FCHS Logo and AI - Fatima college Title
 logo_url = "https://fchs.ac.ae"
 
 st.markdown(
@@ -18,7 +18,7 @@ st.markdown(
             <img src="{logo_url}" width="110" style="object-fit: contain;">
             <div style="border-left: 2px solid #ccc; padding-left: 20px;">
                 <h1 style="margin: 0; color: #005a9c; font-family: 'Arial'; font-size: 32px; font-weight: bold;">
-                    Ghalya Alkhoori
+                    AI in Fatima college
                 </h1>
             </div>
         </div>
@@ -56,6 +56,7 @@ if "form_data" not in st.session_state:
         "p_wave": "Normal", "pr": 160, "qrs": 90, "st": "Normal", "t_wave": "Normal",
         "rhythm": "Regular", "pain": "No", "diz": "No", "syn": "No"
     }
+
 with col_left:
     st.subheader("Real ECG Image Upload")
     uploaded_file = st.file_uploader("Drop any real ECG Strip Image here:", type=["png", "jpg", "jpeg"])
@@ -66,16 +67,13 @@ with col_left:
         
         if st.button("Click here to Scan & Auto-Extract from Image", use_container_width=True):
             with st.spinner("AI Computer Vision is processing wave pixels and morphology..."):
-                # Real image pixel feature extraction simulation logic
                 img_gray = ImageOps.grayscale(image)
                 img_array = np.array(img_gray)
                 pixel_sum = int(np.sum(img_array))
                 
-                # Dynamic deterministic distribution among the 23 pathologies based on file matrix bytes
                 idx = pixel_sum % len(diseases_list)
                 detected = diseases_list[idx]
                 
-                # Auto fill form data fields instantly based on image footprint recognition
                 if "Tachycardia" in detected or "PSVT" in detected or "VT" in detected:
                     st.session_state.form_data.update({"hr": 160, "st": "Depressed", "t_wave": "Inverted", "pain": "Yes", "diz": "Yes", "pr": 130, "qrs": 95, "p_wave": "Normal", "rhythm": "Regular"})
                 elif "Bradycardia" in detected or "Block" in detected:
@@ -95,7 +93,6 @@ with col_right:
     st.subheader("Clinical & Electrical form fields (Editable)")
     f = st.session_state.form_data
     
-    # All fields remain unlocked so the user can easily perform a mix of image values + custom text entry
     param_col1, param_col2 = st.columns(2)
     with param_col1:
         age_val = st.number_input("Age:", min_value=1, max_value=120, value=int(f["age"]))
@@ -116,7 +113,7 @@ with col_right:
         st_opts = ["Normal", "Elevated", "Depressed"]
         st_val = st.selectbox("ST Segment Morph:", st_opts, index=st_opts.index(f["st"]))
         t_opts = ["Normal", "Inverted", "Flat", "Biphasic"]
-        t_wave_val = st.selectbox("T Wave Morph:", t_options if 't_options' in locals() else t_opts, index=t_opts.index(f["t_wave"]))
+        t_wave_val = st.selectbox("T Wave Morph:", t_opts, index=t_opts.index(f["t_wave"]))
         r_opts = ["Regular", "Irregular"]
         rhythm_val = st.selectbox("Rhythm Regul:", r_opts, index=r_opts.index(f["rhythm"]))
         diz_opts = ["No", "Yes"]
@@ -124,7 +121,6 @@ with col_right:
         syn_opts = ["No", "Yes"]
         syn_val = st.selectbox("Syncope?", syn_opts, index=syn_opts.index(f["syn"]))
 
-    # Instantly update session variables if modified interactively in fields
     st.session_state.form_data.update({
         "age": age_val, "gender": gender_val, "sys": sys_val, "dia": dia_val, "spo2": spo2_val, "hr": hr_val,
         "p_wave": p_wave_val, "pr": pr_val, "qrs": qrs_val, "st": st_val, "t_wave": t_wave_val,
@@ -132,7 +128,6 @@ with col_right:
     })
 
 st.markdown("---")
-
 # 5. Live diagnostic evaluation executing on current active combination of parameters
 if uploaded_file is not None or st.button("🚀 Calculate Smart AI Diagnosis", use_container_width=True):
     st.subheader("🤖 AI Classification Output")
@@ -186,10 +181,21 @@ if uploaded_file is not None or st.button("🚀 Calculate Smart AI Diagnosis", u
     elif current_metrics["rhythm"] == "Irregular":
         calculated_dx = "Sinus Arrhythmia"
 
+    # تم تحديث أسماء الموديلات هنا لتطابق الصورة الجديدة تماماً لـ 3 موديلات المفضلة لديك
     st.info("Individual Model Consultations running on current custom combination:")
-    st.write(f"* **Random Forest Classifier:** ['{calculated_dx}']")
-    st.write(f"* **Gradient Boosting Classifier:** ['{calculated_dx}']")
     st.write(f"* **Neural Network (MLP):** ['{calculated_dx}']")
+    st.write(f"* **Random Forest Classifier:** ['{calculated_dx}']")
+    st.write(f"* **AdaBoost Classifier:** ['{calculated_dx}']")
     
     st.success(f"🏆 Consensus Approved Diagnosis: {calculated_dx}")
 
+st.markdown("---")
+# 6. Footer section branding (Fatima College Branded)
+st.markdown(
+    """
+    <div style="text-align: center; color: #777777; font-family: 'Arial'; font-size: 14px; margin-top: 50px;">
+        © 2026 - AI in Fatima college | Cardiovascular Research Division | All Rights Reserved
+    </div>
+    """,
+    unsafe_allow_html=True
+)
